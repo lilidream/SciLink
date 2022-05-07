@@ -1,4 +1,6 @@
-window.onload = function() {
+class SciLink{
+  constructor(option){
+    // 注册节点
     G6.registerNode(
       'dom-node',
       (cfg) => `
@@ -12,34 +14,38 @@ window.onload = function() {
       </rect>
       `,
     );
-    const data = {
-        nodes: [
-            { id: 'node1'},
-            { id: 'node2'},
-        ],
-        edges: [{ source: 'node1', target: 'node2' }],
-    };
-    const graph = new G6.Graph({
-      modes:{
-        default: ['drag-canvas', 'zoom-canvas', 'drag-node']
-      },
-      container: 'nodeCanvas',
-      width: 500,
-      height: 500,
-      defaultNode: {
-          type: 'dom-node',
-          size: [120, 40],
-      },
-      animate: true,
-      layout: {
+    // 默认为力布局
+    if (!option.layout){
+      option.layout = {
         type: 'gForce',
         prevenOverlap: true,
         linkDistance: 200,
         minMovement: 0.1,
         maxIteration: 1000,
-        // gpuEnabled: true
       }
-    });
-    graph.data(data);
-    graph.render();
+    }
+    if (!option.modes){
+      option.modes = {
+        default: ['drag-canvas', 'zoom-canvas', 'drag-node']
+      }
+    }
+    if (!option.defaultNode){
+      option.defaultNode = {
+          type: 'dom-node',
+          size: [120, 40],
+      }
+    }
+    console.log(option);
+    this.g6 = new G6.Graph(option)
+  }
+
+  // 给G6输入数据
+  data(d){
+    this.g6.data(d);
+  }
+
+  // 渲染
+  render(){
+    this.g6.render();
+  }
 }

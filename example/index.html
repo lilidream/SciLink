@@ -18,10 +18,23 @@
 
 <script src="../js/g6.min.js"></script>
 <script src="../js/vue.global.js"></script>
-<script src="../js/SciLink.js" type="module"></script>
-
+<script src="../js/SciLink.js"></script>
 <body>
     <div class="showBox">
         <div id="nodeCanvas"></div>
     </div>
 </body>
+<script>
+    var graph = new SciLink({
+        container: 'nodeCanvas'
+    })
+    const data = {
+        nodes: [
+            { id: '节点1'},
+            { id: '节点2'},
+        ],
+        edges: [{ source: '节点1', target: '节点2' }],
+    };
+    graph.data(data);
+    graph.render();
+</script>

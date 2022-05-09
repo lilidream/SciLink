@@ -15,26 +15,47 @@
         }
     </style>
 </head>
-
+<script id="MathJax-script" async src="es5/tex-mml-svg.js"></script>
+<!-- <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
+	<script>
+		MathJax = {
+			tex: {
+				inlineMath: [
+					['$', '$'],
+					['\\(', '\\)'],
+					['$$', '$$']
+				]
+			},
+			jax: ["input/TeX", "output/SVG"]
+		};
+</script>
 <script src="../js/g6.min.js"></script>
 <script src="../js/vue.global.js"></script>
 <script src="../js/SciLink.js"></script>
+
 <body>
     <div class="showBox">
         <div id="nodeCanvas"></div>
     </div>
+    <p>$F=ma$</p>
+    <script>
+        var graph = new SciLink({
+            container: 'nodeCanvas'
+        })
+        const data = {
+            nodes: [
+                { id: 'm', name: 'Mass'},
+                { id: 'a', name: 'Acceleration'},
+                { id: 'F', name: "Newton's Second Law", type:'equation', latex:'F=ma'}
+            ],
+            links: [
+                { from: 'm', to: 'F' },
+                { from: 'a', to: 'F' }
+            ],
+        };
+        window.onload = function(){
+            graph.data(data);
+            graph.render();
+        }
+    </script>
 </body>
-<script>
-    var graph = new SciLink({
-        container: 'nodeCanvas'
-    })
-    const data = {
-        nodes: [
-            { id: '节点1'},
-            { id: '节点2'},
-        ],
-        edges: [{ source: '节点1', target: '节点2' }],
-    };
-    graph.data(data);
-    graph.render();
-</script>

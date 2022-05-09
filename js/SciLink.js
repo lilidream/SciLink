@@ -68,6 +68,8 @@ class SciLink{
       element: "#C4DCEB",
       equation: "#46B692"
     }
+
+    // nodes
     for(i=0; i<nodeLength; i++){
       d = data.nodes[i];
       node = {
@@ -88,13 +90,43 @@ class SciLink{
       }
       g6Data.nodes.push(node);
     }
+
+    // edges
     var linkLength = data.links.length;
+    var linkStyle = function(color){
+      return{
+        1: {},
+        2: {
+          endArrow: {
+            path: G6.Arrow.triangle(5, 10, 5),
+            d: 5,fill: color, stroke:color
+          }
+        },
+        3:{
+          endArrow: {
+            path: G6.Arrow.triangle(5, 10, 5),
+            d: 5,fill: color, stroke:color
+          },
+          startArrow: {
+            path: G6.Arrow.triangle(5, 10, 5),
+            d: 5,fill: color, stroke:color
+          }
+        }
+      }
+    }
     for(i=0; i<linkLength; i++){
       d = data.links[i];
-      g6Data.edges.push({
+      var edge = {
         source: d.from,
         target: d.to
-      })
+      }
+      if (d.label){
+        edge.label = d.label
+      }
+      if (d.type > 1){
+        edge.style = linkStyle(d.color||'#888888')[d.type];
+      }
+      g6Data.edges.push(edge)
     }
     return g6Data;
   }

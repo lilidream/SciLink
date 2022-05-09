@@ -44,13 +44,14 @@
         })
         const data = {
             nodes: [
-                { id: 'm', name: 'Mass'},
-                { id: 'a', name: 'Acceleration'},
-                { id: 'F', name: "Newton's Second Law", type:'equation', latex:'F=ma'}
+                { id: 'm', name: '质量'},
+                { id: 'a', name: '加速度'},
+                { id: 'F', name: "牛顿第二定律", type:'equation', latex:'F=ma'}
             ],
             links: [
-                { from: 'm', to: 'F' },
-                { from: 'a', to: 'F' }
+                { from: 'm', to: 'F' , type: 2},
+                { from: 'a', to: 'F' , type: 2},
+                { from: 'a', to: 'm' , type: 3},
             ],
         };
         window.onload = function(){

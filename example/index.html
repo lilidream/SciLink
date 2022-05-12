@@ -11,7 +11,7 @@
         #nodeCanvas {
             width: 100%;
             height: 100%;
-            border: 1px solid black;
+            border: 1px solid #000000;
         }
     </style>
 </head>
@@ -44,14 +44,20 @@
         })
         const data = {
             nodes: [
-                { id: 'm', name: '质量'},
-                { id: 'a', name: '加速度'},
-                { id: 'F', name: "牛顿第二定律", type:'equation', latex:'F=ma'}
+                { id: 'm', name: '质量', type:'element'},
+                { id: 'a', name: '加速度', type:'element'},
+                { id: 'F', name: '力', type:'element'},
+                { id: 'n2l', name: "牛顿第二定律", type:'equation', latex:'F=ma'},
+                { id: 'Newton', name: '牛顿', type:'object'},
+                { id: 'spdChange', name: '改变速度', content: '力作用到物体上，使物体速度产生变化，加速度即单位时间内速度的变化量', type:'process'}
             ],
             links: [
-                { from: 'm', to: 'F' , type: 2},
-                { from: 'a', to: 'F' , type: 2},
-                { from: 'a', to: 'm' , type: 3},
+                { from: 'm', to: 'n2l' , type: 1},
+                { from: 'a', to: 'n2l' , type: 1},
+                { from: 'n2l', to: 'F' , type: 3},
+                { from: 'Newton', to: 'n2l', type: 2},
+                { from: 'F', to: 'spdChange', type: 2},
+                { from: 'spdChange', to: 'a', type: 2}
             ],
         };
         window.onload = function(){

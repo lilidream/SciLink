@@ -27,13 +27,49 @@ class SciLink{
         </rect>
       </group>
     `);
+    
+    G6.registerNode('space1', (cfg) => `
+      <group>
+        <rect style={{width:${cfg.width + cfg.padding + 20}, height:${cfg.height + cfg.padding*2}, stroke: '${cfg.color}', textAlign:'center', radius:[6,6,6,6]}}  name="equation" keyShape='true'>
+          <rect style={{width:20, height:${cfg.height + cfg.padding*2}, fill:'${cfg.color}', radius:[6,0,0,6]}}></rect>
+          <image style={{width:20,height:20,img:'${cfg.icon}',marginLeft:0,marginTop:${-14-cfg.padding*2}}}></image>
+          <text style={{fill: '#000',  textAlign:'left', fontSize:12, marginLeft:${(22)}, marginTop:${-(cfg.height+16+cfg.padding*2)}}} name="title">${cfg.range}</text>
+        </rect>
+      </group>
+    `);
+
+    G6.registerNode('space2', (cfg) => `
+      <group>
+        <rect style={{width:${cfg.width + cfg.padding + 20}, height:${cfg.height*3 + cfg.padding*2}, stroke: '${cfg.color}', textAlign:'center', radius:[6,6,6,6]}}  name="equation" keyShape='true'>
+          <rect style={{width:20, height:${cfg.height*3 + cfg.padding*2}, fill:'${cfg.color}', radius:[6,0,0,6]}}></rect>
+          <image style={{width:20,height:20,img:'${cfg.icon}',marginLeft:0,marginTop:${-cfg.height*2-cfg.padding}}}></image>
+          <text style={{fill: '#000',  textAlign:'center', fontSize:12, marginLeft:${22+cfg.width/2}, marginTop:${-(cfg.height*3+16+cfg.padding*2)}}} name="title">${cfg.range[0]}</text>
+          <text style={{fill: '#000',  textAlign:'center', fontSize:12, marginLeft:${(22+cfg.width/2)}, marginTop:${-(cfg.height*3+16+cfg.padding*2)}}} name="title">↓</text>
+          <text style={{fill: '#000',  textAlign:'center', fontSize:12, marginLeft:${22+cfg.width/2}, marginTop:${-(cfg.height*3+16+cfg.padding*2)}}} name="title">${cfg.range[1]}</text>
+        </rect>
+      </group>
+    `);
+    G6.registerNode('space3', (cfg) => `
+      <group>
+        <rect style={{width:${cfg.width + cfg.padding + 20}, height:${cfg.height*3 + cfg.padding*2}, stroke: '${cfg.color}', textAlign:'center', radius:[6,6,6,6]}}  name="equation" keyShape='true'>
+          <rect style={{width:20, height:${cfg.height*3 + cfg.padding*2}, fill:'${cfg.color}', radius:[6,0,0,6]}}></rect>
+          <image style={{width:20,height:20,img:'${cfg.icon}',marginLeft:0,marginTop:${-cfg.height*2-cfg.padding}}}></image>
+          <text style={{fill: '#000',  textAlign:'center', fontSize:12, marginLeft:${22+cfg.width/2}, marginTop:${-(cfg.height*3+16+cfg.padding*2)}}} name="title">${cfg.range[0]}</text>
+          <text style={{fill: '#000',  textAlign:'center', fontSize:12, marginLeft:${(22+cfg.textWidth[3]/2)}, marginTop:${-(cfg.height*3+16+cfg.padding*2)}}} name="title">${cfg.range[3]}</text>
+          <text style={{fill: '#000',  textAlign:'center', fontSize:12, marginLeft:${(22+cfg.textWidth[1]/2+cfg.textWidth[0]+cfg.textWidth[3])}, marginTop:${-(cfg.height*4+16+cfg.padding*2)}}} name="title">${cfg.range[1]}</text>
+          <rect style={{stroke:'${cfg.color}',width:${Math.max(cfg.textWidth[0], cfg.textWidth[2])}, height:${cfg.height}, marginLeft:${22+cfg.textWidth[3]}, marginTop:${-(cfg.height*6+cfg.padding*2)}, textAlign:'center'}}></rect>
+          <text style={{fill: '#000',  textAlign:'center', fontSize:12, marginLeft:${22+cfg.width/2}, marginTop:${-(cfg.height*6+cfg.padding*2)}}} name="title">${cfg.range[2]}</text>
+        </rect>
+      </group>
+    `);
+    
     // 默认为力布局
     option.layout = option.layout || {
         type: 'gForce',
         prevenOverlap: true,
         linkDistance: 200,
-        minMovement: 0.001,
-        maxIteration: 10000,
+        minMovement: 0.01,
+        maxIteration: 1000,
       };
     option.modes = option.modes || {
       default: ['drag-canvas', 'zoom-canvas', 'drag-node']
@@ -88,7 +124,9 @@ class SciLink{
     var colors = {
       element: "#C4DCEB",
       equation: "#46B692",
-      process: "#ba7ece"
+      process: "#ba7ece",
+      space: "#397fc6",
+      time: "#288a59"
     }
 
     // nodes
@@ -122,6 +160,25 @@ class SciLink{
         node.content = t.text;
         node.height = t.lineNumber * 18;
         node.width = textNumber*12
+      }else if (d.type == 'space' || d.type == 'time'){
+        node.icon = d.type == 'space' ? this.icon('pin') : this.icon('time');
+        node.range = d.range;
+        if (typeof(d.range) == 'string'){
+          node.type = 'space1';
+          node.width = d.range.length * 12
+        }else if (typeof(d.range) == 'object'){
+          if (d.range.length == 1){
+            node.type = 'space1';
+            node.width = d.range.length * 12
+          }else if (d.range.length < 4){
+            node.type = 'space2';
+            node.width = Math.max(d.range[0].length, d.range[1].length) * 12
+          }else{
+            node.type = 'space3';
+            node.textWidth = d.range.map(v=>v.length*12)
+            node.width = Math.max(node.textWidth[0], node.textWidth[2]) + node.textWidth[1] + node.textWidth[3];
+          }
+        }
       }
       g6Data.nodes.push(node);
     }
@@ -146,6 +203,12 @@ class SciLink{
             path: G6.Arrow.triangle(5, 10, 5),
             d: 5,fill: color, stroke:color
           }
+        },
+        4:{
+          endArrow: {
+            path: G6.Arrow.rect(15, 2, 5),
+            d: 5,fill: color, stroke:color
+          },
         }
       }
     }
@@ -175,5 +238,14 @@ class SciLink{
   // 渲染
   render(){
     this.g6.render();
+  }
+
+  //图标
+  icon(type){
+    let d = {
+      pin:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGcgZGF0YS1uYW1lPSJMYXllciAyIiBzdHlsZT0iZmlsbDojZmZmIj48ZyBkYXRhLW5hbWU9InBpbiI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBvcGFjaXR5PSIwIi8+PHBhdGggZD0iTTEyIDJhOCA4IDAgMCAwLTggNy45MmMwIDUuNDggNy4wNSAxMS41OCA3LjM1IDExLjg0YTEgMSAwIDAgMCAxLjMgMEMxMyAyMS41IDIwIDE1LjQgMjAgOS45MkE4IDggMCAwIDAgMTIgMnptMCAxNy42NWMtMS42Ny0xLjU5LTYtNi02LTkuNzNhNiA2IDAgMCAxIDEyIDBjMCAzLjctNC4zMyA4LjE0LTYgOS43M3oiLz48cGF0aCBkPSJNMTIgNmEzLjUgMy41IDAgMSAwIDMuNSAzLjVBMy41IDMuNSAwIDAgMCAxMiA2em0wIDVhMS41IDEuNSAwIDEgMSAxLjUtMS41QTEuNSAxLjUgMCAwIDEgMTIgMTF6Ii8+PC9nPjwvZz48L3N2Zz4=",
+      time:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6I2ZmZiI+PGcgZGF0YS1uYW1lPSJMYXllciAyIj48ZyBkYXRhLW5hbWU9ImNsb2NrIj48cmVjdCB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHRyYW5zZm9ybT0icm90YXRlKDE4MCAxMiAxMikiIG9wYWNpdHk9IjAiLz48cGF0aCBkPSJNMTIgMmExMCAxMCAwIDEgMCAxMCAxMEExMCAxMCAwIDAgMCAxMiAyem0wIDE4YTggOCAwIDEgMSA4LTggOCA4IDAgMCAxLTggOHoiLz48cGF0aCBkPSJNMTYgMTFoLTNWOGExIDEgMCAwIDAtMiAwdjRhMSAxIDAgMCAwIDEgMWg0YTEgMSAwIDAgMCAwLTJ6Ii8+PC9nPjwvZz48L3N2Zz4=",
+    }
+    return d[type];
   }
 }

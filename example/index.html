@@ -49,7 +49,11 @@
                 { id: 'F', name: '力', type:'element'},
                 { id: 'n2l', name: "牛顿第二定律", type:'equation', latex:'F=ma'},
                 { id: 'Newton', name: '牛顿', type:'object'},
-                { id: 'spdChange', name: '改变速度', content: '力作用到物体上，使物体速度产生变化，加速度即单位时间内速度的变化量', type:'process'}
+                { id: 'spdChange', name: '改变速度', content: '力作用到物体上，使物体速度产生变化，加速度即单位时间内速度的变化量', type:'process'},
+                { id: 'England', range: '英格兰', type: 'space'},
+                { id: 'beijing', range: ['华北平原','长江中下游地区'], type: 'space'},
+                { id: 'area', range: ['60N', '130E','10N','70E'], type: 'space'},
+                { id: 't1', range: ['2022年5月','2022年6月'],type:'time'}
             ],
             links: [
                 { from: 'm', to: 'n2l' , type: 1},
@@ -57,7 +61,8 @@
                 { from: 'n2l', to: 'F' , type: 3},
                 { from: 'Newton', to: 'n2l', type: 2},
                 { from: 'F', to: 'spdChange', type: 2},
-                { from: 'spdChange', to: 'a', type: 2}
+                { from: 'spdChange', to: 'a', type: 2},
+                { from: 'Newton', to: 'England', type: 4},
             ],
         };
         window.onload = function(){
